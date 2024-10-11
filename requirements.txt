@@ -1,4 +1,10 @@
-python-decouple==3.8
+asgiref==3.8.1
+certifi==2024.8.30
+charset-normalizer==3.4.0
 Django==5.1.2
+idna==3.10
+python-decouple==3.8
+requests==2.32.3
 setuptools==75.1.0
-
+sqlparse==0.5.1
+urllib3==2.2.3
