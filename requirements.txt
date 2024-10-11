@@ -1,0 +1,4 @@
+python-decouple==3.8
+Django==5.1.2
+setuptools==75.1.0
+
