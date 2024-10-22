@@ -1,10 +1,9 @@
 from django.db import models
 
-# Create your models here.
-
-class CurrencyRequest(models.Model):
-    timestamp = models.DateTimeField(auto_now_add=True)
-    usd_to_rub = models.FloatField()
+# Модель для хранения курсов обмена валют
+class ExchangeRate(models.Model):
+    date = models.DateField()  # Поле для хранения даты
+    rate = models.DecimalField(max_digits=10, decimal_places=4)  # DecimalField для точного хранения курса
 
     def __str__(self):
-        return f"{self.timestamp}: {self.usd_to_rub}"
+        return f"{self.date}: {self.rate}"  # Удобное отображение данных в виде строки

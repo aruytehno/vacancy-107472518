@@ -1,33 +1,45 @@
-from django.shortcuts import render
+from django.http import JsonResponse, HttpResponse
+from django.core.cache import cache
+from datetime import date
+from .services import CurrencyService
+from .models import ExchangeRate
 
-# Create your views here.
+from django.http import JsonResponse, HttpResponse
+from django.core.cache import cache
+from datetime import date
+from .services import CurrencyService
+from .models import ExchangeRate
 
-import requests
-import time
-from django.http import JsonResponse
-from .models import CurrencyRequest
 
-API_URL = "https://api.exchangerate-api.com/v4/latest/USD"
+from django.http import JsonResponse, HttpResponse
+from django.core.cache import cache
+from datetime import date
+from .services import CurrencyService
+from .models import ExchangeRate
 
-def get_current_usd(request):
-    # Задержка 10 секунд между запросами
-    time.sleep(10)
+def get_dollar_rate(request):
+    # Попробуем получить курс из кеша
+    cached_rate = cache.get('dollar_rate')
 
-    # Получение данных из API
-    response = requests.get(API_URL)
-    data = response.json()
-    usd_to_rub = data['rates']['RUB']
+    if cached_rate:
+        # Если курс есть в кеше, возвращаем его
+        return JsonResponse({'usd_to_rub': cached_rate, 'source': 'cache'})
 
-    # Сохранение в базу данных
-    CurrencyRequest.objects.create(usd_to_rub=usd_to_rub)
+    # Если в кеше нет, запрашиваем через сервис
+    rate = CurrencyService.get_exchange_rate()
 
-    # Получение последних 10 запросов
-    last_10_requests = CurrencyRequest.objects.order_by('-timestamp')[:10]
+    if rate:
+        # Проверяем, записан ли курс в базу данных
+        exchange_rate = ExchangeRate.objects.create(date=date.today(), rate=rate)
 
-    # Формирование ответа
-    response_data = {
-        'current_usd_to_rub': usd_to_rub,
-        'last_10_requests': list(last_10_requests.values())
-    }
+        # Кешируем результат на 10 секунд
+        cache.set('dollar_rate', rate, timeout=10)
 
-    return JsonResponse(response_data)
+        # Возвращаем полученный курс и указываем источник данных
+        return JsonResponse({'usd_to_rub': rate, 'source': 'new_data'})
+
+    else:
+        # Если курс не удалось получить, возвращаем сообщение об ошибке
+        return HttpResponse("Не удалось получить курс доллара", status=500)
+
+
