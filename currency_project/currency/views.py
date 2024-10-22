@@ -1,10 +1,15 @@
 from django.http import JsonResponse, HttpResponse
 from django.core.cache import cache
 from datetime import datetime
+import pytz
 from .services import CurrencyService
 from .models import ExchangeRate
 
+
 def get_dollar_rate(request):
+    # Определяем московский часовой пояс
+    moscow_tz = pytz.timezone('Europe/Moscow')
+
     # Попробуем получить курс из кеша
     cached_rate = cache.get('dollar_rate')
 
@@ -17,8 +22,8 @@ def get_dollar_rate(request):
     rate = CurrencyService.get_exchange_rate()
 
     if rate:
-        # Проверяем, записан ли курс в базу данных
-        ExchangeRate.objects.create(date=datetime.now().date(), rate=rate)
+        # Сохраняем курс с датой в базе данных
+        ExchangeRate.objects.create(date=datetime.now(moscow_tz).date(), rate=rate)
 
         # Кешируем результат на 10 секунд
         cache.set('dollar_rate', rate, timeout=10)
@@ -26,8 +31,8 @@ def get_dollar_rate(request):
         # Получаем список последних 10 запросов из кеша
         last_requests = cache.get('last_requests', [])
 
-        # Добавляем новый запрос с датой и временем
-        last_requests.append({'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'rate': rate})
+        # Добавляем новый запрос с московским временем
+        last_requests.append({'timestamp': datetime.now(moscow_tz).strftime('%Y-%m-%d %H:%M:%S'), 'rate': rate})
 
         # Оставляем только последние 10 записей
         if len(last_requests) > 10:

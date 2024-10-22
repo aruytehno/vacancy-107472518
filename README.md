@@ -71,57 +71,48 @@
 - Пример ответа http://127.0.0.1:8000/get-current-usd/ в формате JSON:
 ```json
 {
-  "current_usd_to_rub": 96.94,
-  "last_10_requests": [
+  "usd_to_rub": 96.57,
+  "source": "new_data",
+  "last_requests": [
     {
-      "id": 12,
-      "timestamp": "2024-10-11T10:19:14.190Z",
-      "usd_to_rub": 96.94
+      "timestamp": "2024-10-22 14:10:23",
+      "rate": 96.57
     },
     {
-      "id": 11,
-      "timestamp": "2024-10-11T10:18:57.238Z",
-      "usd_to_rub": 96.94
+      "timestamp": "2024-10-22 14:13:40",
+      "rate": 96.57
     },
     {
-      "id": 10,
-      "timestamp": "2024-10-11T10:18:44.236Z",
-      "usd_to_rub": 96.94
+      "timestamp": "2024-10-22 14:13:51",
+      "rate": 96.57
     },
     {
-      "id": 9,
-      "timestamp": "2024-10-11T10:18:31.802Z",
-      "usd_to_rub": 96.94
+      "timestamp": "2024-10-22 14:14:01",
+      "rate": 96.57
     },
     {
-      "id": 8,
-      "timestamp": "2024-10-11T10:18:19.561Z",
-      "usd_to_rub": 96.94
+      "timestamp": "2024-10-22 14:14:12",
+      "rate": 96.57
     },
     {
-      "id": 7,
-      "timestamp": "2024-10-11T10:18:05.912Z",
-      "usd_to_rub": 96.94
+      "timestamp": "2024-10-22 14:14:23",
+      "rate": 96.57
     },
     {
-      "id": 6,
-      "timestamp": "2024-10-11T09:37:15.967Z",
-      "usd_to_rub": 96.94
+      "timestamp": "2024-10-22 14:14:34",
+      "rate": 96.57
     },
     {
-      "id": 5,
-      "timestamp": "2024-10-11T09:35:57.843Z",
-      "usd_to_rub": 96.94
+      "timestamp": "2024-10-22 14:14:46",
+      "rate": 96.57
     },
     {
-      "id": 4,
-      "timestamp": "2024-10-11T09:34:13.748Z",
-      "usd_to_rub": 96.94
+      "timestamp": "2024-10-22 14:14:57",
+      "rate": 96.57
     },
     {
-      "id": 3,
-      "timestamp": "2024-10-11T09:33:39.378Z",
-      "usd_to_rub": 96.94
+      "timestamp": "2024-10-22 14:15:11",
+      "rate": 96.57
     }
   ]
 }
