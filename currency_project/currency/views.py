@@ -1,15 +1,8 @@
 from django.http import JsonResponse, HttpResponse
 from django.core.cache import cache
-from datetime import date
+from datetime import datetime
 from .services import CurrencyService
 from .models import ExchangeRate
-
-from django.http import JsonResponse, HttpResponse
-from django.core.cache import cache
-from datetime import date
-from .services import CurrencyService
-from .models import ExchangeRate
-
 
 def get_dollar_rate(request):
     # Попробуем получить курс из кеша
@@ -17,14 +10,15 @@ def get_dollar_rate(request):
 
     if cached_rate:
         # Если курс есть в кеше, возвращаем его
-        return JsonResponse({'usd_to_rub': cached_rate, 'source': 'cache'})
+        last_requests = cache.get('last_requests', [])
+        return JsonResponse({'usd_to_rub': cached_rate, 'source': 'cache', 'last_requests': last_requests})
 
     # Если в кеше нет, запрашиваем через сервис
     rate = CurrencyService.get_exchange_rate()
 
     if rate:
         # Проверяем, записан ли курс в базу данных
-        ExchangeRate.objects.create(date=date.today(), rate=rate)
+        ExchangeRate.objects.create(date=datetime.now().date(), rate=rate)
 
         # Кешируем результат на 10 секунд
         cache.set('dollar_rate', rate, timeout=10)
@@ -32,8 +26,8 @@ def get_dollar_rate(request):
         # Получаем список последних 10 запросов из кеша
         last_requests = cache.get('last_requests', [])
 
-        # Добавляем новый курс в список запросов
-        last_requests.append({'date': date.today(), 'rate': rate})
+        # Добавляем новый запрос с датой и временем
+        last_requests.append({'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'rate': rate})
 
         # Оставляем только последние 10 записей
         if len(last_requests) > 10:
